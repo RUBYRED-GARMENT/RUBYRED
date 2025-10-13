@@ -399,7 +399,7 @@
         document.body.style.overflow = "auto";
       }
 
-   /*
+  
       // Function to check time and toggle displays
       function checkTime() {
         const now = new Date();
@@ -408,7 +408,7 @@
         const countdown = document.getElementById('countdown');
         const off = document.getElementById('off');
 
-        const isOpen = (hour >= 8 && hour < 12);
+        const isOpen = (hour >= 8 && hour < 17);
 
         if (isOpen) {
           frame.style.display = 'block';
@@ -429,8 +429,8 @@
         let targetTime = new Date(now);
         let label = '';
         if (isOpen) {
-          targetTime.setHours(12, 0, 0, 0);
-          if (now.getHours() >= 12) {
+          targetTime.setHours(17, 0, 0, 0);
+          if (now.getHours() >= 17) {
             targetTime.setDate(targetTime.getDate() + 1);
           }
           label = 'Time left: ';
@@ -449,7 +449,7 @@
         countdown.textContent = `${label}${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         countdown.innerHTML += '<span style="display: inline-block; margin-left: 10px; animation: led-blink 1s linear infinite;">&#9679;</span>';
       }
-     */
+     
       // Run checkTime on load and every second
       checkTime();
       setInterval(checkTime, 1000);
@@ -472,6 +472,7 @@ s0.parentNode.insertBefore(s1,s0);
 
 </body>
 </html>
+
 
 
 
