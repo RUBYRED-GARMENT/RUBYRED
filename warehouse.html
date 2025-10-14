@@ -390,7 +390,7 @@
         const countdown = document.getElementById('countdown');
         const off = document.getElementById('off');
 
-        const isOpen = (hour >= 8 && hour < 17);
+        const isOpen = (hour >= 8 && hour < 14);
 
         if (isOpen) {
           frame.style.display = 'block';
@@ -411,8 +411,8 @@
         let targetTime = new Date(now);
         let label = '';
         if (isOpen) {
-          targetTime.setHours(17, 0, 0, 0);
-          if (now.getHours() >= 17) {
+          targetTime.setHours(14, 0, 0, 0);
+          if (now.getHours() >= 14) {
             targetTime.setDate(targetTime.getDate() + 1);
           }
           label = 'Time left: ';
@@ -454,5 +454,6 @@ s0.parentNode.insertBefore(s1,s0);
 
 </body>
 </html>
+
 
 
