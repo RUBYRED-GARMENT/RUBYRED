@@ -388,7 +388,7 @@
         const countdown = document.getElementById('countdown');
         const off = document.getElementById('off');
 
-        const isOpen = (hour >= 9 && hour < 11);
+        const isOpen = (hour >= 11 && hour < 13);
 
         if (isOpen) {
           frame.style.display = 'block';
@@ -409,14 +409,14 @@
         let targetTime = new Date(now);
         let label = '';
         if (isOpen) {
-          targetTime.setHours(11, 0, 0, 0);
-          if (now.getHours() >= 11) {
+          targetTime.setHours(13, 0, 0, 0);
+          if (now.getHours() >= 13) {
             targetTime.setDate(targetTime.getDate() + 1);
           }
           label = 'Time left: ';
         } else {
-          targetTime.setHours(9, 0, 0, 0);
-          if (now.getHours() >= 9) {
+          targetTime.setHours(11, 0, 0, 0);
+          if (now.getHours() >= 11) {
             targetTime.setDate(targetTime.getDate() + 1);
           }
           label = 'Will open after: ';
