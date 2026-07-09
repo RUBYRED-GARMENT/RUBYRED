@@ -44,9 +44,10 @@
         .success { background: rgba(0,255,0,0.15); color: #00e676; border: 1px solid #00c851; }
         .info    { background: rgba(51,181,229,0.1); color: #33b5e5; }
         .warn    { background: rgba(255,165,0,0.1); color: #ffa500; border: 1px solid #cc8400; }
-        .tab-bar { display: flex; border: 1px solid #333; border-radius: 8px; overflow: hidden; margin-bottom: 22px; }
-        .tab-btn { flex: 1; padding: 10px; background: transparent; border: none; color: #888; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+        .tab-bar { display: flex; flex-wrap: wrap; border: 1px solid #333; border-radius: 8px; overflow: hidden; margin-bottom: 22px; }
+        .tab-btn { flex: 1 1 50%; padding: 10px 6px; background: transparent; border: none; color: #888; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.2s; font-family: inherit; border-bottom: 1px solid #222; }
         .tab-btn.active { background: var(--accent); color: #fff; }
+        .tab-btn.mode-btn { flex: 1 1 33.33%; font-size: 11px; }
         #bulkSection { display: none; }
         .upload-zone { border: 2px dashed #444; border-radius: 10px; padding: 28px 15px; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s; position: relative; margin-bottom: 15px; }
         .upload-zone:hover, .upload-zone.drag-over { border-color: var(--accent); background: rgba(46,125,50,0.05); }
@@ -138,10 +139,15 @@
         <div class="stat-box">QA <span>SYSTEM</span></div>
     </div>
     <h2>QA</h2>
-    <div class="brand-sub">QA OVERTIME</div>
-    <div class="tab-bar">
-        <button class="tab-btn active" id="tabSingle" onclick="switchTab('single')">&#1578;&#1587;&#1580;&#1610;&#1604; &#1601;&#1585;&#1583;&#1610;</button>
-        <button class="tab-btn"        id="tabBulk"   onclick="switchTab('bulk')">&#1585;&#1601;&#1593; Excel &#1580;&#1605;&#1575;&#1593;&#1610;</button>
+    <div class="brand-sub" id="brandSub">QA OVERTIME</div>
+    <div class="tab-bar" id="modeBar" style="margin-bottom:10px;">
+        <button class="tab-btn mode-btn active" id="modeNormalBtn"   onclick="switchMode('normal')">&#1578;&#1587;&#1580;&#1610;&#1604; &#1593;&#1575;&#1583;&#1610;</button>
+        <button class="tab-btn mode-btn"        id="modeSaturdayBtn" onclick="switchMode('saturday')">Saturday Overtime</button>
+        <button class="tab-btn mode-btn"        id="modeHolidayBtn"  onclick="switchMode('holiday')">Holiday Overtime</button>
+    </div>
+    <div class="tab-bar" id="viewBar">
+        <button class="tab-btn active" id="viewSingleBtn" onclick="switchView('single')">&#1578;&#1587;&#1580;&#1610;&#1604; &#1601;&#1585;&#1583;&#1610;</button>
+        <button class="tab-btn"        id="viewBulkBtn"   onclick="switchView('bulk')">&#1585;&#1601;&#1593; Excel &#1580;&#1605;&#1575;&#1593;&#1610;</button>
     </div>
 
     <div id="singleSection">
@@ -209,8 +215,8 @@
 
 <script>
 // ===== TIME GATE =====
-var OPEN_H  = 13;
-var CLOSE_H = 15;
+var OPEN_H  = 7;
+var CLOSE_H = 17;
 var appUnlocked = false;
 
 function getNowSec() {
@@ -265,6 +271,8 @@ function doLogin() {
         document.getElementById('loginOverlay').style.display = 'none';
         document.getElementById('mainApp').style.display      = 'block';
         appUnlocked = true;
+        currentMode = 'normal';
+        applyModeTheme(currentMode);
         Promise.all([updateDashboard(), preloadEmployees()]);
         setTimeout(function(){ document.getElementById('codeInp').focus(); }, 100);
     } else {
@@ -276,30 +284,74 @@ function doLogin() {
 }
 
 // ===== API =====
-var API_URL = "https://script.google.com/macros/s/AKfycbxjsic3oF88iuHM13KV3UDQ7-icph4g55oT6bPuTeFL3f2J9PrV7A2f7D65h7SCvetG/exec";
+// رابط سكريبت التسجيل العادي (Overtime عادي)
+var API_URL_NORMAL   = "https://script.google.com/macros/s/AKfycbxjsic3oF88iuHM13KV3UDQ7-icph4g55oT6bPuTeFL3f2J9PrV7A2f7D65h7SCvetG/exec";
+// ضع هنا رابط سكريبت شيت "Saturday Overtime" لما تبعته
+var API_URL_SATURDAY = "https://script.google.com/macros/s/AKfycbwNkPJ22j6nDRoC3WrKLaisc--XKBUK-MwOaTFzjpUXOD-pidKpMzS3CEU09U0uH3OO/exec";
+// ضع هنا رابط سكريبت شيت "Holiday Overtime" لما تبعته
+var API_URL_HOLIDAY  = "https://script.google.com/macros/s/AKfycbyCyEDYsJLsl43glJa3cDsBdSZMeRyUOexbBtg8ikIoR9u7hVhmJ3cZSCdocSMZltUqyw/exec";
 
-var employeeCache = {}, cacheLoaded = false;
+// الوضع الحالي: normal | saturday | holiday
+var currentMode = 'normal';
+
+var MODE_COLORS = { normal: '#2e7d32', saturday: '#1565c0', holiday: '#6a1b9a' };
+var MODE_LABELS = { normal: 'QA OVERTIME', saturday: 'SATURDAY OVERTIME', holiday: 'HOLIDAY OVERTIME' };
+
+function getApiUrl(mode) {
+    if (mode === 'saturday') return API_URL_SATURDAY;
+    if (mode === 'holiday')  return API_URL_HOLIDAY;
+    return API_URL_NORMAL;
+}
+
+function applyModeTheme(mode) {
+    document.documentElement.style.setProperty('--accent', MODE_COLORS[mode] || MODE_COLORS.normal);
+    var bs = document.getElementById('brandSub');
+    if (bs) bs.textContent = MODE_LABELS[mode] || MODE_LABELS.normal;
+}
+
+var employeeCacheStore = { normal: {}, saturday: {}, holiday: {} };
+var cacheLoadedStore   = { normal: false, saturday: false, holiday: false };
 
 async function preloadEmployees() {
+    var mode = currentMode;
+    if (cacheLoadedStore[mode]) return;
     try {
         var ctrl = new AbortController();
         var timer = setTimeout(function(){ ctrl.abort(); }, 15000);
-        var res   = await fetch(API_URL + '?action=getAllEmployees', { signal: ctrl.signal });
+        var res   = await fetch(getApiUrl(mode) + '?action=getAllEmployees', { signal: ctrl.signal });
         clearTimeout(timer);
         var data  = await res.json();
         if (data.status === "success" && data.employees) {
-            data.employees.forEach(function(e){ employeeCache[String(e.code).trim()] = e; });
-            cacheLoaded = true;
+            data.employees.forEach(function(e){ employeeCacheStore[mode][String(e.code).trim()] = e; });
+            cacheLoadedStore[mode] = true;
         }
     } catch(e) {}
 }
 
-// ===== TAB =====
-function switchTab(tab) {
-    document.getElementById('tabSingle').classList.toggle('active', tab==='single');
-    document.getElementById('tabBulk').classList.toggle('active', tab==='bulk');
-    document.getElementById('singleSection').style.display = tab==='single' ? 'block' : 'none';
-    document.getElementById('bulkSection').style.display   = tab==='bulk'   ? 'block' : 'none';
+// ===== MODE (normal / saturday / holiday) + VIEW (single / bulk) =====
+var currentView = 'single';
+
+function switchMode(mode) {
+    currentMode = mode;
+    document.getElementById('modeNormalBtn').classList.toggle('active', mode==='normal');
+    document.getElementById('modeSaturdayBtn').classList.toggle('active', mode==='saturday');
+    document.getElementById('modeHolidayBtn').classList.toggle('active', mode==='holiday');
+
+    applyModeTheme(mode);
+    updateDashboard();
+    if (!cacheLoadedStore[mode]) preloadEmployees();
+
+    // إعادة عرض نفس نوع الشاشة (فردي/جماعي) اللي كان المستخدم فيه، لكن بالوضع الجديد
+    switchView(currentView);
+}
+
+function switchView(view) {
+    currentView = view;
+    document.getElementById('viewSingleBtn').classList.toggle('active', view==='single');
+    document.getElementById('viewBulkBtn').classList.toggle('active', view==='bulk');
+    document.getElementById('singleSection').style.display = view==='single' ? 'block' : 'none';
+    document.getElementById('bulkSection').style.display   = view==='bulk'   ? 'block' : 'none';
+    if (view==='single') resetUI(); else resetBulk();
 }
 
 // ===== HELPERS =====
@@ -328,15 +380,16 @@ function extractLiteralTime(raw) {
 function isEligible(t){ var h=parseInt(t.split(':')[0])||0, m=parseInt(t.split(':')[1])||0; return !(h>11||(h===11&&m>0)); }
 
 async function fetchEmployee(code) {
-    if (cacheLoaded && employeeCache[code]) return { found:true, data:employeeCache[code] };
+    var mode = currentMode;
+    if (cacheLoadedStore[mode] && employeeCacheStore[mode][code]) return { found:true, data:employeeCacheStore[mode][code] };
     try {
         var ctrl=new AbortController(), timer=setTimeout(function(){ ctrl.abort(); },15000);
-        var res=await fetch(API_URL+'?code='+encodeURIComponent(code),{signal:ctrl.signal});
+        var res=await fetch(getApiUrl(mode)+'?code='+encodeURIComponent(code),{signal:ctrl.signal});
         clearTimeout(timer);
         var d=await res.json();
         if (d.status==="success"){
             var emp={name:d.name, dept:d.dept, hours:d.hours, address:d.address||''};
-            employeeCache[code]=emp;
+            employeeCacheStore[mode][code]=emp;
             return {found:true, data:emp};
         }
         if (d.status==="already_registered") return {found:true,alreadyRegistered:true,data:null};
@@ -344,7 +397,7 @@ async function fetchEmployee(code) {
     return {found:false};
 }
 
-// ===== BULK UPLOAD =====
+// ===== BULK UPLOAD (وضع التسجيل العادي فقط) =====
 var eligibleList=[], lastBulkResults=[];
 
 function handleDrop(e){ e.preventDefault(); document.getElementById('uploadZone').classList.remove('drag-over'); var f=e.dataTransfer.files[0]; if(f) processExcelFile(f); }
@@ -431,7 +484,7 @@ async function submitAllEligible() {
     for (var i=0; i<eligibleList.length; i++) {
         var emp=eligibleList[i];
         try {
-            await fetch(API_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({
+            await fetch(getApiUrl(currentMode),{method:'POST',mode:'no-cors',body:JSON.stringify({
                 code:emp.code, name:emp.name, dept:emp.dept, hours:emp.displayTime, address:emp.address||''
             })});
             sent++;
@@ -462,21 +515,18 @@ function xlsHeader() {
 }
 
 function downloadBulkExcel() {
-    if (!lastBulkResults.length) return;
+    // ثغرة سابقة: كان بيتم تحميل كل الأسماء حتى اللي تجاوزوا الحد أو مش مسموح لهم بالتسجيل.
+    // التعديل: الشيت اللي بيتحمل بيحتوي فقط على الموظفين المسموح لهم بالتسجيل (eligible).
+    var eligibleOnly = lastBulkResults.filter(function(r){ return r.status === 'ok'; });
+    if (!eligibleOnly.length) { showBulkMsg("\u0644\u0627 \u064A\u0648\u062C\u062F \u0645\u0648\u0638\u0641\u0648\u0646 \u0645\u0633\u0645\u0648\u062D \u0644\u0647\u0645 \u0644\u062A\u062D\u0645\u064A\u0644\u0647\u0645","warn"); return; }
     var d = new Date().toISOString().split('T')[0];
     var html = xlsHeader() + '<table>'
-        + '<tr><td colspan="5" class="title">QA - OVERTIME REPORT</td></tr>'
-        + '<tr><td colspan="2" class="meta">Date</td><td colspan="3" class="meta">'+d+'</td></tr>'
-        + '<tr><td colspan="5" style="border:none;height:6px;"></td></tr>'
-        + '<tr><th class="hdr">Employee Code</th><th class="hdr">Full Name</th><th class="hdr">Address</th><th class="hdr">Overtime Hours</th><th class="hdr">Status</th></tr>';
-    lastBulkResults.forEach(function(r){
-        var stxt='', scls='';
-        if      (r.status==='ok')         { stxt='Eligible';     scls='ok'; }
-        else if (r.status==='blocked')    { stxt='Exceeded';     scls='block'; }
-        else if (r.status==='registered') { stxt='Already Reg.'; scls='block'; }
-        else                              { stxt='Not Found';    scls='unk'; }
-        var hcls = r.status==='ok'?'h-ok':r.status==='blocked'?'h-bad':'';
-        html+='<tr><td>'+r.code+'</td><td>'+r.name+'</td><td>'+(r.address||'-')+'</td><td class="'+hcls+'">'+r.displayTime+'</td><td class="'+scls+'">'+stxt+'</td></tr>';
+        + '<tr><td colspan="4" class="title">QA - OVERTIME REPORT ('+(MODE_LABELS[currentMode]||'')+')</td></tr>'
+        + '<tr><td colspan="2" class="meta">Date</td><td colspan="2" class="meta">'+d+'</td></tr>'
+        + '<tr><td colspan="4" style="border:none;height:6px;"></td></tr>'
+        + '<tr><th class="hdr">Employee Code</th><th class="hdr">Full Name</th><th class="hdr">Address</th><th class="hdr">Overtime Hours</th></tr>';
+    eligibleOnly.forEach(function(r){
+        html+='<tr><td>'+r.code+'</td><td>'+r.name+'</td><td>'+(r.address||'-')+'</td><td class="h-ok">'+r.displayTime+'</td></tr>';
     });
     html+='</table></body></html>';
     triggerXls(html,'QA_Overtime_BulkResult_'+d+'.xls');
@@ -485,11 +535,11 @@ function downloadBulkExcel() {
 async function downloadHistoryExcel() {
     showMessage("\u062C\u0627\u0631\u064A \u0627\u0644\u062A\u062D\u0645\u064A\u0644...","info");
     try {
-        var res=await fetch(API_URL+'?action=getFullTodayData'), data=await res.json();
+        var res=await fetch(getApiUrl(currentMode)+'?action=getFullTodayData'), data=await res.json();
         if (data.status==="success") {
             var d=new Date().toISOString().split('T')[0];
             var html=xlsHeader()+'<table>'
-                +'<tr><td colspan="7" class="title">QA - DAILY OVERTIME REPORT</td></tr>'
+                +'<tr><td colspan="7" class="title">QA - DAILY OVERTIME REPORT ('+(MODE_LABELS[currentMode]||'')+')</td></tr>'
                 +'<tr><td colspan="3" class="meta">Date</td><td colspan="4" class="meta">'+d+'</td></tr>'
                 +'<tr><td colspan="3" class="meta">Total Registered</td><td colspan="4" class="meta num">'+data.list.length+'</td></tr>'
                 +'<tr><td colspan="7" style="border:none;height:6px;"></td></tr>'
@@ -524,14 +574,14 @@ function resetBulk() {
 async function lookupEmployee() {
     var code=String(document.getElementById('codeInp').value).trim();
     if (!code) return showMessage("\u064A\u0631\u062C\u0649 \u0625\u062F\u062E\u0627\u0644 \u0627\u0644\u0643\u0648\u062F","error");
-    if (cacheLoaded&&employeeCache[code]){ var e=employeeCache[code]; displayEmployee({status:"success",name:e.name,dept:e.dept,hours:e.hours,address:e.address||''}); return; }
+    if (cacheLoadedStore[currentMode]&&employeeCacheStore[currentMode][code]){ var e=employeeCacheStore[currentMode][code]; displayEmployee({status:"success",name:e.name,dept:e.dept,hours:e.hours,address:e.address||''}); return; }
     showMessage("\u062C\u0627\u0631\u064A \u0627\u0644\u0628\u062D\u062B...","info");
     try {
         var ctrl=new AbortController(), timer=setTimeout(function(){ ctrl.abort(); },15000);
-        var res=await fetch(API_URL+'?code='+code,{signal:ctrl.signal}); clearTimeout(timer);
+        var res=await fetch(getApiUrl(currentMode)+'?code='+code,{signal:ctrl.signal}); clearTimeout(timer);
         var data=await res.json();
         if (data.status==="already_registered") return showMessage("\u0627\u0644\u0645\u0648\u0638\u0641 \u0645\u0633\u062C\u0644 \u0628\u0627\u0644\u0641\u0639\u0644!","error");
-        if (data.status==="success"){ displayEmployee(data); employeeCache[code]={name:data.name,dept:data.dept,hours:data.hours,address:data.address||''}; }
+        if (data.status==="success"){ displayEmployee(data); employeeCacheStore[currentMode][code]={name:data.name,dept:data.dept,hours:data.hours,address:data.address||''}; }
         else showMessage("\u0627\u0644\u0643\u0648\u062F \u063A\u064A\u0631 \u0645\u0648\u062C\u0648\u062F","error");
     } catch(e){ showMessage(e.name==='AbortError'?"\u0627\u0646\u062A\u0647\u062A \u0627\u0644\u0645\u0647\u0644\u0629\u060C \u062D\u0627\u0648\u0644 \u0645\u0631\u0629 \u0623\u062E\u0631\u0649":"\u062E\u0637\u0623 \u0641\u064A \u0627\u0644\u0627\u062A\u0635\u0627\u0644","error"); }
 }
@@ -542,9 +592,18 @@ function displayEmployee(data) {
     document.getElementById('addressInp').value = data.address || '';
     var t=extractLiteralTime(data.hours), hInp=document.getElementById('hoursInp');
     hInp.value=t; hInp.className='';
-    var h=parseInt(t.split(':')[0])||0, m=parseInt(t.split(':')[1])||0;
-    if (h>11||(h===11&&m>0)){ hInp.classList.add('danger-hours'); document.getElementById('submitBtn').style.display='none'; showMessage("\u0645\u0631\u0641\u0648\u0636: \u062A\u062E\u0637\u0649 \u0627\u0644\u062D\u062F \u0627\u0644\u0623\u0642\u0635\u0649 (11:00)","error"); }
-    else { hInp.classList.add('safe-hours'); document.getElementById('submitBtn').style.display='block'; hideMessage(); }
+
+    if (currentMode === 'normal') {
+        var h=parseInt(t.split(':')[0])||0, m=parseInt(t.split(':')[1])||0;
+        if (h>11||(h===11&&m>0)){ hInp.classList.add('danger-hours'); document.getElementById('submitBtn').style.display='none'; showMessage("\u0645\u0631\u0641\u0648\u0636: \u062A\u062E\u0637\u0649 \u0627\u0644\u062D\u062F \u0627\u0644\u0623\u0642\u0635\u0649 (11:00)","error"); }
+        else { hInp.classList.add('safe-hours'); document.getElementById('submitBtn').style.display='block'; hideMessage(); }
+    } else {
+        // Saturday / Holiday overtime: لا يوجد أي شرط أو حد أقصى للساعات - أي موظف يقدر يسجل
+        hInp.classList.add('safe-hours');
+        document.getElementById('submitBtn').style.display='block';
+        hideMessage();
+    }
+
     document.getElementById('searchSection').style.display='none';
     document.getElementById('detailsSection').style.display='block';
     document.getElementById('backBtn').style.display='block';
@@ -559,7 +618,7 @@ async function submitData() {
         hours:   document.getElementById('hoursInp').value
     };
     try {
-        await fetch(API_URL,{method:'POST',mode:'no-cors',body:JSON.stringify(payload)});
+        await fetch(getApiUrl(currentMode),{method:'POST',mode:'no-cors',body:JSON.stringify(payload)});
         showMessage("\u062A\u0645 \u0627\u0644\u062A\u0633\u062C\u064A\u0644 \u0628\u0646\u062C\u0627\u062D!","success");
         updateDashboard();
         setTimeout(resetUI,1500);
@@ -578,7 +637,7 @@ async function updateDashboard() {
     try {
         var ctrl=new AbortController();
         setTimeout(function(){ ctrl.abort(); },10000);
-        var res=await fetch(API_URL+'?action=getFullTodayData',{signal:ctrl.signal}), data=await res.json();
+        var res=await fetch(getApiUrl(currentMode)+'?action=getFullTodayData',{signal:ctrl.signal}), data=await res.json();
         if(data.status==="success") document.getElementById('countDash').innerText=data.totalEmployees;
     } catch(e) {}
 }
