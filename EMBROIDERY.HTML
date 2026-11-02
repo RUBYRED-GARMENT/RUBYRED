@@ -216,7 +216,7 @@
 <script>
 // ===== TIME GATE =====
 var OPEN_H  = 11;
-var CLOSE_H = 14;
+var CLOSE_H = 23;
 var appUnlocked = false;
 
 function getNowSec() {
@@ -285,10 +285,10 @@ function doLogin() {
 
 // ===== API =====
 // رابط سكريبت التسجيل العادي (Overtime عادي)
-var API_URL_NORMAL   = "https://script.google.com/macros/s/AKfycbz5__2c9kcCWaM0sRyvgSqRk2akxJMgISsDqMuQdhjDkq_Bu5hfmckrvV7eX2njtM6s/exec";
-// ضع هنا رابط سكريبت شيت "Saturday Overtime" لما تبعته
+var API_URL_NORMAL   = "https://script.google.com/macros/s/AKfycbyJbHfDKg0Q4INwOoQ23PX2qoaSTHsTacN2n-aTYSI7CGOytmqDl0CjruWQcQJ1MW4b/exec";
+// رابط سكريبت شيت "Saturday Overtime"
 var API_URL_SATURDAY = "https://script.google.com/macros/s/AKfycbwqzwLNDZwxmTSvCoWhQTYOXt8_9_8RFx2HWi4dK0bd0qMlrJaA64tLDe_eb7T4iyDMjg/exec";
-// ضع هنا رابط سكريبت شيت "Holiday Overtime" لما تبعته
+// رابط سكريبت شيت "Holiday Overtime"
 var API_URL_HOLIDAY  = "https://script.google.com/macros/s/AKfycbzWu9HlvjTcCqj1m4Oj86soPg8mGiJBl0NpG9sPTqoZMXu5SwfeFwxMkzjksjibayEKSA/exec";
 
 // الوضع الحالي: normal | saturday | holiday
@@ -397,7 +397,7 @@ async function fetchEmployee(code) {
     return {found:false};
 }
 
-// ===== BULK UPLOAD (وضع التسجيل العادي فقط) =====
+// ===== BULK UPLOAD =====
 var eligibleList=[], lastBulkResults=[];
 
 function handleDrop(e){ e.preventDefault(); document.getElementById('uploadZone').classList.remove('drag-over'); var f=e.dataTransfer.files[0]; if(f) processExcelFile(f); }
@@ -515,8 +515,7 @@ function xlsHeader() {
 }
 
 function downloadBulkExcel() {
-    // ثغرة سابقة: كان بيتم تحميل كل الأسماء حتى اللي تجاوزوا الحد أو مش مسموح لهم بالتسجيل.
-    // التعديل: الشيت اللي بيتحمل بيحتوي فقط على الموظفين المسموح لهم بالتسجيل (eligible).
+    // الشيت اللي بيتحمل بيحتوي فقط على الموظفين المسموح لهم بالتسجيل (eligible).
     var eligibleOnly = lastBulkResults.filter(function(r){ return r.status === 'ok'; });
     if (!eligibleOnly.length) { showBulkMsg("\u0644\u0627 \u064A\u0648\u062C\u062F \u0645\u0648\u0638\u0641\u0648\u0646 \u0645\u0633\u0645\u0648\u062D \u0644\u0647\u0645 \u0644\u062A\u062D\u0645\u064A\u0644\u0647\u0645","warn"); return; }
     var d = new Date().toISOString().split('T')[0];
@@ -545,7 +544,8 @@ async function downloadHistoryExcel() {
                 +'<tr><td colspan="7" style="border:none;height:6px;"></td></tr>'
                 +'<tr><th class="hdr">#</th><th class="hdr">Employee Code</th><th class="hdr">Full Name</th><th class="hdr">Department</th><th class="hdr">Address</th><th class="hdr">Overtime Hours</th><th class="hdr">Reg. Time</th></tr>';
             data.list.forEach(function(r,i){
-                html+='<tr><td class="num">'+(i+1)+'</td><td>'+r.code+'</td><td>'+r.name+'</td><td>'+r.dept+'</td><td>'+(r.address||'-')+'</td><td class="h-ok">'+extractLiteralTime(r.hours)+'</td><td>'+formatRegTime(r.time)+'</td></tr>';
+                // [FIXED] الساعات راجعة نص جاهز من Apps Script (getDisplayValues)، فمفيش داعي لـ extractLiteralTime (كانت بتخصم ساعة تانية)
+                html+='<tr><td class="num">'+(i+1)+'</td><td>'+r.code+'</td><td>'+r.name+'</td><td>'+r.dept+'</td><td>'+(r.address||'-')+'</td><td class="h-ok">'+String(r.hours).substring(0,5)+'</td><td>'+formatRegTime(r.time)+'</td></tr>';
             });
             html+='</table></body></html>';
             triggerXls(html,'EMBROIDERY_Overtime_'+d+'.xls');
