@@ -86,6 +86,7 @@
         #bulkResetBtn   { display: none; background: #333; color: #aaa; }
         #downloadXlsBtn { display: none; background: #1565c0; color: #fff; font-size: 13px; }
         #bulkMsg { margin-top: 12px; text-align: center; font-size: 13px; display: none; padding: 10px; border-radius: 8px; font-weight: bold; }
+        #syncBanner { position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%); z-index: 9000; display: none; padding: 10px 18px; border-radius: 10px; font-size: 13px; font-weight: bold; max-width: 90%; text-align: center; }
         #loginOverlay { position: fixed; inset: 0; background: var(--bg); display: none; justify-content: center; align-items: center; z-index: 9999; padding: 15px; }
         #loginBox { background: var(--card); padding: 2.5rem; border-radius: 15px; width: 100%; max-width: 380px; border-top: 5px solid var(--accent); box-shadow: 0 10px 30px rgba(0,0,0,0.7); }
         #loginBox h2 { margin-bottom: 5px; }
@@ -109,6 +110,8 @@
     <div class="closed-next" id="closedNextMsg"></div>
 </div>
 
+<div id="syncBanner"></div>
+
 <div id="loginOverlay">
     <div id="loginBox">
         <div class="lock-icon">&#128272;</div>
@@ -125,51 +128,50 @@
                    onkeydown="if(event.key==='Enter') doLogin()">
         </div>
         <button id="loginBtn" onclick="doLogin()">LOGIN</button>
-        <div id="loginErr">&#1582;&#1591;&#1571; &#1601;&#1610; &#1575;&#1587;&#1605; &#1575;&#1604;&#1605;&#1587;&#1578;&#1582;&#1583;&#1605; &#1571;&#1608; &#1603;&#1604;&#1605;&#1577; &#1575;&#1604;&#1605;&#1585;&#1608;&#1585;</div>
+        <div id="loginErr">خطأ في اسم المستخدم أو كلمة المرور</div>
     </div>
 </div>
 
 <div class="container" id="mainApp" style="display:none;">
     <div id="countdownBanner">
-        <div class="cd-label" id="cdLabel">&#1610;&#1602;&#1601;&#1604; &#1576;&#1593;&#1583;</div>
+        <div class="cd-label" id="cdLabel">يقفل بعد</div>
         <div class="cd-time cd-close" id="cdTime">00:00:00</div>
     </div>
     <div class="dashboard">
-        <div class="stat-box">&#1575;&#1604;&#1605;&#1587;&#1580;&#1604;&#1610;&#1606; &#1575;&#1604;&#1610;&#1608;&#1605;: <span id="countDash">0</span></div>
+        <div class="stat-box">المسجلين اليوم: <span id="countDash">0</span></div>
         <div class="stat-box">PRODUCTION <span>SYSTEM</span></div>
     </div>
     <h2>PRODUCTION</h2>
     <div class="brand-sub" id="brandSub">PRODUCTION OVERTIME</div>
     <div class="tab-bar" id="modeBar" style="margin-bottom:10px;">
-        <button class="tab-btn mode-btn active" id="modeNormalBtn"   onclick="switchMode('normal')">&#1578;&#1587;&#1580;&#1610;&#1604; &#1593;&#1575;&#1583;&#1610;</button>
+        <button class="tab-btn mode-btn active" id="modeNormalBtn"   onclick="switchMode('normal')">تسجيل عادي</button>
         <button class="tab-btn mode-btn"        id="modeSaturdayBtn" onclick="switchMode('saturday')">Saturday Overtime</button>
         <button class="tab-btn mode-btn"        id="modeHolidayBtn"  onclick="switchMode('holiday')">Holiday Overtime</button>
     </div>
     <div class="tab-bar" id="viewBar">
-        <button class="tab-btn active" id="viewSingleBtn" onclick="switchView('single')">&#1578;&#1587;&#1580;&#1610;&#1604; &#1601;&#1585;&#1583;&#1610;</button>
-        <button class="tab-btn"        id="viewBulkBtn"   onclick="switchView('bulk')">&#1585;&#1601;&#1593; Excel &#1580;&#1605;&#1575;&#1593;&#1610;</button>
+        <button class="tab-btn active" id="viewSingleBtn" onclick="switchView('single')">تسجيل فردي</button>
+        <button class="tab-btn"        id="viewBulkBtn"   onclick="switchView('bulk')">رفع Excel جماعي</button>
     </div>
 
     <div id="singleSection">
         <div id="searchSection">
             <div class="field-group">
-                <label>&#1603;&#1608;&#1583; &#1575;&#1604;&#1593;&#1575;&#1605;&#1604;:</label>
-                <input type="text" id="codeInp" placeholder="&#1575;&#1583;&#1582;&#1604; &#1575;&#1604;&#1603;&#1608;&#1583;..." autofocus
-                       oninput="this.value=this.value.trim()"
+                <label>كود العامل:</label>
+                <input type="text" id="codeInp" placeholder="ادخل الكود..." autofocus
                        onkeydown="if(event.key==='Enter') lookupEmployee()">
             </div>
-            <button class="btn" id="checkBtn" onclick="lookupEmployee()">&#1601;&#1581;&#1589; (Check)</button>
+            <button class="btn" id="checkBtn" onclick="lookupEmployee()">فحص (Check)</button>
         </div>
         <div id="detailsSection" style="display:none;">
-            <div class="field-group"><label>&#1575;&#1604;&#1575;&#1587;&#1605;:</label><input type="text" id="nameInp" disabled></div>
-            <div class="field-group"><label>&#1575;&#1604;&#1602;&#1587;&#1605;:</label><input type="text" id="deptInp" disabled></div>
-            <div class="field-group"><label>&#1575;&#1604;&#1593;&#1606;&#1608;&#1575;&#1606;:</label><input type="text" id="addressInp" disabled></div>
+            <div class="field-group"><label>الاسم:</label><input type="text" id="nameInp" disabled></div>
+            <div class="field-group"><label>القسم:</label><input type="text" id="deptInp" disabled></div>
+            <div class="field-group"><label>العنوان:</label><input type="text" id="addressInp" disabled></div>
             <div class="field-group">
-                <label>&#1573;&#1580;&#1605;&#1575;&#1604;&#1610; &#1575;&#1604;&#1587;&#1575;&#1593;&#1575;&#1578;:</label>
+                <label>إجمالي الساعات:</label>
                 <input type="text" id="hoursInp" disabled style="background:transparent;border:1px solid #444;">
             </div>
-            <button class="btn" id="submitBtn" onclick="submitData()">&#1578;&#1571;&#1603;&#1610;&#1583; &#1608;&#1573;&#1585;&#1587;&#1575;&#1604; (Submit)</button>
-            <button class="btn" id="backBtn"   onclick="resetUI()">&#1585;&#1580;&#1608;&#1593; (Back)</button>
+            <button class="btn" id="submitBtn" onclick="submitData()">تأكيد وإرسال (Submit)</button>
+            <button class="btn" id="backBtn"   onclick="resetUI()">رجوع (Back)</button>
         </div>
         <div id="msg"></div>
     </div>
@@ -181,36 +183,36 @@
              ondrop="handleDrop(event)">
             <input type="file" accept=".xlsx,.xls,.csv" onchange="handleFileInput(this)">
             <div class="upload-icon">&#128202;</div>
-            <div class="upload-label"><strong>&#1575;&#1582;&#1578;&#1585; &#1605;&#1604;&#1601; Excel</strong> &#1571;&#1608; &#1575;&#1587;&#1581;&#1576;&#1607; &#1607;&#1606;&#1575;</div>
-            <div class="upload-hint">xlsx / xls / csv &#8212; &#1575;&#1604;&#1593;&#1605;&#1608;&#1583; &#1575;&#1604;&#1571;&#1608;&#1604; &#1610;&#1581;&#1578;&#1608;&#1610; &#1571;&#1603;&#1608;&#1575;&#1583; &#1575;&#1604;&#1605;&#1608;&#1592;&#1601;&#1610;&#1606;</div>
+            <div class="upload-label"><strong>اختر ملف Excel</strong> أو اسحبه هنا</div>
+            <div class="upload-hint">xlsx / xls / csv — العمود الأول يحتوي أكواد الموظفين</div>
         </div>
         <div id="bulkProgress">
-            <div class="progress-text" id="progressText">&#1580;&#1575;&#1585;&#1610; &#1575;&#1604;&#1605;&#1593;&#1575;&#1604;&#1580;&#1577;...</div>
+            <div class="progress-text" id="progressText">جاري المعالجة...</div>
             <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressFill"></div></div>
         </div>
         <div id="bulkResultsWrap">
             <div class="bulk-stats">
-                <div class="bulk-stat eligible"><span class="stat-val" id="statEligible">0</span>&#1605;&#1587;&#1605;&#1608;&#1581; &#1604;&#1607;&#1605;</div>
-                <div class="bulk-stat blocked" ><span class="stat-val" id="statBlocked">0</span>&#1578;&#1580;&#1575;&#1608;&#1586;&#1608;&#1575; &#1575;&#1604;&#1581;&#1583;</div>
-                <div class="bulk-stat unknown" ><span class="stat-val" id="statUnknown">0</span>&#1594;&#1610;&#1585; &#1605;&#1608;&#1580;&#1608;&#1583;</div>
+                <div class="bulk-stat eligible"><span class="stat-val" id="statEligible">0</span>مسموح لهم</div>
+                <div class="bulk-stat blocked" ><span class="stat-val" id="statBlocked">0</span>تجاوزوا الحد / مسجلين</div>
+                <div class="bulk-stat unknown" ><span class="stat-val" id="statUnknown">0</span>غير موجود</div>
             </div>
             <div class="results-table-wrap">
                 <table class="bulk-table">
-                    <thead><tr><th>&#1575;&#1604;&#1603;&#1608;&#1583;</th><th>&#1575;&#1604;&#1575;&#1587;&#1605;</th><th>&#1575;&#1604;&#1587;&#1575;&#1593;&#1575;&#1578;</th><th>&#1575;&#1604;&#1581;&#1575;&#1604;&#1577;</th></tr></thead>
+                    <thead><tr><th>الكود</th><th>الاسم</th><th>الساعات</th><th>الحالة</th></tr></thead>
                     <tbody id="bulkTableBody"></tbody>
                 </table>
             </div>
             <button class="btn" id="submitAllBtn" onclick="submitAllEligible()">
-                <span id="submitAllLabel">&#1578;&#1587;&#1580;&#1610;&#1604; &#1575;&#1604;&#1603;&#1604; &#1575;&#1604;&#1605;&#1587;&#1605;&#1608;&#1581; &#1604;&#1607;&#1605;</span>
+                <span id="submitAllLabel">تسجيل الكل المسموح لهم</span>
                 <span class="btn-spinner" id="submitAllSpinner"></span>
             </button>
-            <button class="btn" id="downloadXlsBtn" onclick="downloadBulkExcel()">&#1578;&#1581;&#1605;&#1610;&#1604; &#1575;&#1604;&#1606;&#1578;&#1575;&#1574;&#1580; Excel</button>
-            <button class="btn" id="bulkResetBtn"   onclick="resetBulk()">&#1585;&#1601;&#1593; &#1605;&#1604;&#1601; &#1580;&#1583;&#1610;&#1583;</button>
+            <button class="btn" id="downloadXlsBtn" onclick="downloadBulkExcel()">تحميل النتائج Excel</button>
+            <button class="btn" id="bulkResetBtn"   onclick="resetBulk()">رفع ملف جديد</button>
             <div id="bulkMsg"></div>
         </div>
     </div>
 
-    <button class="btn" style="background:transparent;border:1px solid #333;color:#aaa;font-size:11px;margin-top:20px;" onclick="downloadHistoryExcel()">&#1578;&#1581;&#1605;&#1610;&#1604; &#1587;&#1580;&#1604; &#1575;&#1604;&#1610;&#1608;&#1605; Excel</button>
+    <button class="btn" style="background:transparent;border:1px solid #333;color:#aaa;font-size:11px;margin-top:20px;" onclick="downloadHistoryExcel()">تحميل سجل اليوم Excel</button>
 </div>
 
 <script>
@@ -235,7 +237,7 @@ function checkTimeGate() {
         document.getElementById('closedScreen').classList.remove('show');
         if (!appUnlocked) document.getElementById('loginOverlay').style.display = 'flex';
         var rem = close - now;
-        document.getElementById('cdLabel').textContent = '\u064A\u0642\u0641\u0644 \u0628\u0639\u062F';
+        document.getElementById('cdLabel').textContent = 'يقفل بعد';
         document.getElementById('cdTime').className    = 'cd-time cd-close';
         document.getElementById('cdTime').textContent  = hms(rem);
         document.getElementById('countdownBanner').style.display = 'block';
@@ -247,10 +249,10 @@ function checkTimeGate() {
         closed.classList.add('show');
         var nextMsg = document.getElementById('closedNextMsg');
         if (now < open) {
-            nextMsg.innerHTML = '\u064A\u0641\u062A\u062D \u0628\u0639\u062F<span>' + hms(open - now) + '</span>';
+            nextMsg.innerHTML = 'يفتح بعد<span>' + hms(open - now) + '</span>';
         } else {
             var tomorrow = (24*3600 - now) + open;
-            nextMsg.innerHTML = '\u064A\u0641\u062A\u062D \u0627\u0644\u062C\u0644\u0633\u0629 \u0627\u0644\u0642\u0627\u062F\u0645\u0629 \u0628\u0639\u062F<span>' + hms(tomorrow) + '</span>';
+            nextMsg.innerHTML = 'يفتح الجلسة القادمة بعد<span>' + hms(tomorrow) + '</span>';
         }
     }
 }
@@ -273,7 +275,8 @@ function doLogin() {
         appUnlocked = true;
         currentMode = 'normal';
         applyModeTheme(currentMode);
-        Promise.all([updateDashboard(), preloadEmployees()]);
+        renderCount();
+        loadMode(currentMode);
         setTimeout(function(){ document.getElementById('codeInp').focus(); }, 100);
     } else {
         errEl.style.display = 'block';
@@ -284,15 +287,12 @@ function doLogin() {
 }
 
 // ===== API =====
-// رابط سكريبت التسجيل العادي (Overtime عادي)
-var API_URL_NORMAL   = "https://script.google.com/macros/s/AKfycbw-JAMn0ck9t96ze3JNqJP0Al4_5Y5JXWzrqtgrkmo3LlAS6tzFFTL5A0XmDoIWg-vN/exec";
-// ضع هنا رابط سكريبت شيت "Saturday Overtime" لما تبعته
+var API_URL_NORMAL   = "https://script.google.com/macros/s/AKfycbx-9EALaF9DqS8zmko2sqHTamSGFpptHWcT1yEUDc9pbDS2FzqEnp_NftXk3xKki8KL/exec";
 var API_URL_SATURDAY = "https://script.google.com/macros/s/AKfycbwMIuQurj-wPBSFOkWuw5DCdcqAHD0XpCFz9Svovy-Jv2qNkGVPYmec-ca1wlRs6M1r/exec";
-// ضع هنا رابط سكريبت شيت "Holiday Overtime" لما تبعته
 var API_URL_HOLIDAY  = "https://script.google.com/macros/s/AKfycbxLtZUN5HbgRaH5KVXMYaDnvAgRn3BgzLqWmmx0-4orStDDMjEDzMoKHqkLHLuf3xs2/exec";
 
-// الوضع الحالي: normal | saturday | holiday
 var currentMode = 'normal';
+var currentView = 'single';
 
 var MODE_COLORS = { normal: '#2e7d32', saturday: '#1565c0', holiday: '#6a1b9a' };
 var MODE_LABELS = { normal: 'PRODUCTION OVERTIME', saturday: 'SATURDAY OVERTIME', holiday: 'HOLIDAY OVERTIME' };
@@ -309,39 +309,119 @@ function applyModeTheme(mode) {
     if (bs) bs.textContent = MODE_LABELS[mode] || MODE_LABELS.normal;
 }
 
-var employeeCacheStore = { normal: {}, saturday: {}, holiday: {} };
-var cacheLoadedStore   = { normal: false, saturday: false, holiday: false };
+// ===== HELPERS =====
+function sleep(ms){ return new Promise(function(r){ setTimeout(r,ms); }); }
+function esc(s){ return String(s===null||s===undefined?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 
-async function preloadEmployees() {
-    var mode = currentMode;
-    if (cacheLoadedStore[mode]) return;
-    try {
-        var ctrl = new AbortController();
-        var timer = setTimeout(function(){ ctrl.abort(); }, 15000);
-        var res   = await fetch(getApiUrl(mode) + '?action=getAllEmployees', { signal: ctrl.signal });
-        clearTimeout(timer);
-        var data  = await res.json();
-        if (data.status === "success" && data.employees) {
-            data.employees.forEach(function(e){ employeeCacheStore[mode][String(e.code).trim()] = e; });
-            cacheLoadedStore[mode] = true;
-        }
-    } catch(e) {}
+// توحيد شكل الكود (نفس الدالة الموجودة في الـ Apps Script)
+function normCode(v) {
+    if (v===null||v===undefined) return '';
+    var s = String(v).replace(/[\u200B-\u200F\u202A-\u202E\uFEFF\s]/g,'');
+    s = s.replace(/[\u0660-\u0669]/g,function(d){ return String(d.charCodeAt(0)-1632); });
+    s = s.replace(/[\u06F0-\u06F9]/g,function(d){ return String(d.charCodeAt(0)-1776); });
+    if (/^\d+\.0+$/.test(s)) s = s.split('.')[0];
+    if (/^\d+$/.test(s)) s = s.replace(/^0+(?=\d)/,'');
+    return s.toUpperCase();
 }
 
-// ===== MODE (normal / saturday / holiday) + VIEW (single / bulk) =====
-var currentView = 'single';
+// الساعات بتتعرض زي ما هي في شيت الداتا بدون أي تحويل
+function cleanHours(raw){ return (raw===null||raw===undefined) ? '' : String(raw).trim(); }
 
+function hoursToMin(t) {
+    t = cleanHours(t);
+    var m = t.match(/^(\d{1,2}):(\d{2})/);
+    if (m) return parseInt(m[1],10)*60 + parseInt(m[2],10);
+    var n = parseFloat(t);
+    if (!isNaN(n)) return Math.round(n*60);
+    return 0;
+}
+// الحد الأقصى 11:00 (للتسجيل العادي فقط)
+function isEligible(t){ return hoursToMin(t) <= 11*60; }
+
+async function fetchJson(url, timeoutMs) {
+    var ctrl = new AbortController();
+    var timer = setTimeout(function(){ ctrl.abort(); }, timeoutMs || 20000);
+    try {
+        var res = await fetch(url, { signal: ctrl.signal });
+        return await res.json();
+    } finally { clearTimeout(timer); }
+}
+
+// إرسال POST (فردي أو bulk). السيرفر بيمنع التكرار فالإعادة آمنة.
+async function postToServer(mode, payload, timeoutMs) {
+    var body = JSON.stringify(payload);
+    var ctrl = new AbortController();
+    var timer = setTimeout(function(){ ctrl.abort(); }, timeoutMs || 30000);
+    try {
+        var res = await fetch(getApiUrl(mode), { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:body, signal:ctrl.signal });
+        var d = await res.json();
+        if (d.status !== 'success') throw new Error(d.message || 'server error');
+        return d;
+    } catch(e) {
+        if (e.name === 'AbortError' || (e.message && e.message === 'server error')) throw e;
+        if (e instanceof TypeError) {
+            await fetch(getApiUrl(mode), { method:'POST', mode:'no-cors', body:body });
+            return { status:'success', unverified:true };
+        }
+        throw e;
+    } finally { clearTimeout(timer); }
+}
+
+// ===== DATA STORE (كل البيانات في الذاكرة = بحث لحظي) =====
+var store = {
+    normal:   { emps:{}, registered:new Set(), local:new Set(), loaded:false, loading:null },
+    saturday: { emps:{}, registered:new Set(), local:new Set(), loaded:false, loading:null },
+    holiday:  { emps:{}, registered:new Set(), local:new Set(), loaded:false, loading:null }
+};
+
+function renderCount() {
+    var st = store[currentMode];
+    document.getElementById('countDash').innerText = st.loaded ? st.registered.size : '...';
+}
+
+function loadMode(mode, force) {
+    var st = store[mode];
+    if (st.loading) return st.loading;
+    if (st.loaded && !force) return Promise.resolve(true);
+    st.loading = (async function(){
+        for (var a = 0; a < 3; a++) {
+            try {
+                var data = await fetchJson(getApiUrl(mode) + '?action=getAllEmployees&_=' + Date.now(), 25000);
+                if (data.status === 'success' && data.employees) {
+                    var emps = {};
+                    data.employees.forEach(function(e){
+                        emps[normCode(e.code)] = { code:String(e.code).trim(), name:e.name, dept:e.dept, hours:cleanHours(e.hours), address:e.address||'' };
+                    });
+                    var reg = new Set((data.registered||[]).map(normCode));
+                    st.local.forEach(function(c){ reg.add(c); });
+                    st.emps = emps; st.registered = reg; st.loaded = true;
+                    st.loading = null;
+                    if (mode === currentMode) renderCount();
+                    return true;
+                }
+            } catch(e) {}
+            await sleep(700*(a+1));
+        }
+        st.loading = null;
+        return false;
+    })();
+    return st.loading;
+}
+
+// تحديث هادئ كل 45 ثانية عشان نشوف تسجيلات الأجهزة التانية
+setInterval(function(){
+    if (appUnlocked && !bulkBusy) loadMode(currentMode, true);
+}, 45000);
+
+// ===== MODE + VIEW =====
 function switchMode(mode) {
     currentMode = mode;
     document.getElementById('modeNormalBtn').classList.toggle('active', mode==='normal');
     document.getElementById('modeSaturdayBtn').classList.toggle('active', mode==='saturday');
     document.getElementById('modeHolidayBtn').classList.toggle('active', mode==='holiday');
-
     applyModeTheme(mode);
-    updateDashboard();
-    if (!cacheLoadedStore[mode]) preloadEmployees();
-
-    // إعادة عرض نفس نوع الشاشة (فردي/جماعي) اللي كان المستخدم فيه، لكن بالوضع الجديد
+    renderCount();
+    loadMode(mode, store[mode].loaded);
     switchView(currentView);
 }
 
@@ -354,95 +434,81 @@ function switchView(view) {
     if (view==='single') resetUI(); else resetBulk();
 }
 
-// ===== HELPERS =====
-function extractLiteralTime(raw) {
-    if (raw===null||raw===undefined||raw==="") return "00:00";
-    var str = String(raw).trim();
-    if (/^\d{1,2}:\d{2}(:\d{2})?$/.test(str)) {
-        var pts=str.split(':');
-        var total = parseInt(pts[0])*60 + parseInt(pts[1]) - 60;
-        if (total < 0) total = 0;
-        return String(Math.floor(total/60)).padStart(2,'0')+":"+String(total%60).padStart(2,'0');
-    }
-    if (str.includes('T')) {
-        var tp=str.split('T')[1].replace('Z',''), pts2=tp.split(':');
-        var h=parseInt(pts2[0])||0, m=parseInt(pts2[1])||0, s=parseInt(pts2[2])||0;
-        var utc=h*3600+m*60+s, off=new Date().getTimezoneOffset()*-60+360;
-        var tot=((utc+off)%86400+86400)%86400;
-        tot = Math.max(0, tot - 3600);
-        return String(Math.floor(tot/3600)).padStart(2,'0')+':'+String(Math.floor((tot%3600)/60)).padStart(2,'0');
-    }
-    var num=parseFloat(str);
-    if (!isNaN(num)&&num>0&&num<=1){ var tm=Math.round(num*24*60)-60; if(tm<0)tm=0; return String(Math.floor(tm/60)).padStart(2,'0')+":"+String(tm%60).padStart(2,'0'); }
-    if (!isNaN(num)&&num>1){ var h2=Math.floor(num),m2=Math.round((num-h2)*60); var total2=h2*60+m2-60; if(total2<0)total2=0; return String(Math.floor(total2/60)).padStart(2,'0')+":"+String(total2%60).padStart(2,'0'); }
-    return str;
+// ===== SYNC BANNER =====
+var pendingSaves = 0;
+function showSync(text, cls) {
+    var b = document.getElementById('syncBanner');
+    if (!text) { b.style.display = 'none'; return; }
+    b.className = cls; b.innerText = text; b.style.display = 'block';
 }
-function isEligible(t){ var h=parseInt(t.split(':')[0])||0, m=parseInt(t.split(':')[1])||0; return !(h>11||(h===11&&m>0)); }
+window.addEventListener('beforeunload', function(e){
+    if (pendingSaves > 0) { e.preventDefault(); e.returnValue = ''; }
+});
 
-async function fetchEmployee(code) {
-    var mode = currentMode;
-    if (cacheLoadedStore[mode] && employeeCacheStore[mode][code]) return { found:true, data:employeeCacheStore[mode][code] };
-    try {
-        var ctrl=new AbortController(), timer=setTimeout(function(){ ctrl.abort(); },15000);
-        var res=await fetch(getApiUrl(mode)+'?code='+encodeURIComponent(code),{signal:ctrl.signal});
-        clearTimeout(timer);
-        var d=await res.json();
-        if (d.status==="success"){
-            var emp={name:d.name, dept:d.dept, hours:d.hours, address:d.address||''};
-            employeeCacheStore[mode][code]=emp;
-            return {found:true, data:emp};
-        }
-        if (d.status==="already_registered") return {found:true,alreadyRegistered:true,data:null};
-    } catch(e) {}
-    return {found:false};
+// حفظ في الخلفية مع إعادة محاولة تلقائية
+async function saveInBackground(mode, payload) {
+    pendingSaves++;
+    var ok = false;
+    for (var a = 0; a < 5 && !ok; a++) {
+        try { await postToServer(mode, payload, 30000); ok = true; }
+        catch(e) { await sleep(1000*(a+1)); }
+    }
+    pendingSaves--;
+    if (!ok) showSync('تعذر حفظ تسجيل (كود ' + payload.code + ') - تأكد من الإنترنت وسجله مرة أخرى', 'error');
+    else if (pendingSaves === 0) showSync('', '');
 }
 
-// ===== BULK UPLOAD (وضع التسجيل العادي فقط) =====
-var eligibleList=[], lastBulkResults=[];
+// ===== BULK UPLOAD =====
+var eligibleList=[], lastBulkResults=[], bulkBusy=false;
 
 function handleDrop(e){ e.preventDefault(); document.getElementById('uploadZone').classList.remove('drag-over'); var f=e.dataTransfer.files[0]; if(f) processExcelFile(f); }
 function handleFileInput(i){ var f=i.files[0]; if(f) processExcelFile(f); }
 
 function processExcelFile(file) {
-    showBulkMsg("\u062C\u0627\u0631\u064A \u0642\u0631\u0627\u0621\u0629 \u0627\u0644\u0645\u0644\u0641...","info");
+    showBulkMsg("جاري قراءة الملف...","info");
     var reader = new FileReader();
     reader.onload = function(e) {
         try {
             var data=new Uint8Array(e.target.result), wb=XLSX.read(data,{type:'array'});
             var rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,defval:''});
-            var codes=[], startRow=0;
+            var codes=[], seen={}, startRow=0;
             if (rows.length>0){ var fc=String(rows[0][0]).trim(); if(isNaN(fc)&&fc!=='') startRow=1; }
-            for (var i=startRow;i<rows.length;i++){ var r=String(rows[i][0]).trim(); if(r&&r!==''&&r!=='undefined') codes.push(r); }
-            if (!codes.length){ showBulkMsg("\u0644\u0645 \u064A\u062A\u0645 \u0627\u0644\u0639\u062B\u0648\u0631 \u0639\u0644\u0649 \u0623\u0643\u0648\u0627\u062F \u0641\u064A \u0627\u0644\u0645\u0644\u0641","error"); return; }
+            for (var i=startRow;i<rows.length;i++){
+                var raw=String(rows[i][0]).trim(), key=normCode(raw);
+                if (key && !seen[key]) { seen[key]=true; codes.push(raw); }
+            }
+            if (!codes.length){ showBulkMsg("لم يتم العثور على أكواد في الملف","error"); return; }
             hideBulkMsg(); lookupBulkCodes(codes);
-        } catch(err){ showBulkMsg("\u062E\u0637\u0623 \u0641\u064A \u0642\u0631\u0627\u0621\u0629 \u0627\u0644\u0645\u0644\u0641","error"); }
+        } catch(err){ showBulkMsg("خطأ في قراءة الملف","error"); }
     };
     reader.readAsArrayBuffer(file);
 }
 
 async function lookupBulkCodes(codes) {
+    var mode = currentMode, st = store[mode];
     document.getElementById('uploadZone').style.display='none';
     document.getElementById('bulkProgress').style.display='block';
     document.getElementById('bulkResultsWrap').style.display='none';
     hideBulkMsg();
-    var results=[], total=codes.length;
     var fill=document.getElementById('progressFill'), prog=document.getElementById('progressText');
-    for (var i=0;i<total;i++) {
-        var code=codes[i];
-        prog.textContent='\u062C\u0627\u0631\u064A \u0627\u0644\u0628\u062D\u062B... '+(i+1)+' / '+total+'  ('+code+')';
-        fill.style.width=((i/total)*100)+'%';
-        var r=await fetchEmployee(code);
-        if (!r.found)
-            results.push({code:code, status:'unknown', name:'-', dept:'-', address:'-', displayTime:'-', eligible:false});
-        else if (r.alreadyRegistered)
-            results.push({code:code, status:'registered', name:'-', dept:'-', address:'-', displayTime:'-', eligible:false});
-        else {
-            var t=extractLiteralTime(r.data.hours), el=isEligible(t);
-            results.push({code:code, status:el?'ok':'blocked', name:r.data.name, dept:r.data.dept, address:r.data.address||'', displayTime:t, eligible:el});
-        }
-        await sleep(80);
+    prog.textContent='جاري تحديث بيانات الموظفين...'; fill.style.width='30%';
+    bulkBusy = true;
+    var ok = await loadMode(mode, true);   // طلب واحد بيجيب كل حاجة
+    bulkBusy = false;
+    if (!ok) {
+        document.getElementById('bulkProgress').style.display='none';
+        document.getElementById('uploadZone').style.display='block';
+        showBulkMsg('تعذر الاتصال بالسيرفر - حاول مرة أخرى (مش معناها إن الأكواد غير موجودة)','error');
+        return;
     }
-    fill.style.width='100%'; prog.textContent='\u0627\u0643\u062A\u0645\u0644\u062A \u0627\u0644\u0645\u0639\u0627\u0644\u062C\u0629'; await sleep(400);
+    fill.style.width='100%';
+    var results = codes.map(function(code){
+        var key = normCode(code), emp = st.emps[key];
+        if (!emp) return {code:code, status:'unknown', name:'-', dept:'-', address:'-', displayTime:'-'};
+        if (st.registered.has(key)) return {code:emp.code, status:'registered', name:emp.name, dept:emp.dept, address:emp.address, displayTime:emp.hours};
+        var el = (mode !== 'normal') ? true : isEligible(emp.hours);
+        return {code:emp.code, status:el?'ok':'blocked', name:emp.name, dept:emp.dept, address:emp.address, displayTime:emp.hours};
+    });
     renderBulkResults(results);
 }
 
@@ -457,101 +523,111 @@ function renderBulkResults(results) {
     document.getElementById('statBlocked').textContent=bl.length;
     document.getElementById('statUnknown').textContent=un.length;
     var tbody=document.getElementById('bulkTableBody'); tbody.innerHTML='';
+    var frag=document.createDocumentFragment();
     results.forEach(function(r){
         var tr=document.createElement('tr');
         var badge='';
-        if      (r.status==='ok')         badge='<span class="row-badge badge-ok">\u0645\u0633\u0645\u0648\u062D</span>';
-        else if (r.status==='blocked')    badge='<span class="row-badge badge-skip">\u062A\u062C\u0627\u0648\u0632 \u0627\u0644\u062D\u062F</span>';
-        else if (r.status==='registered') badge='<span class="row-badge badge-skip">\u0645\u0633\u062C\u0651\u0644</span>';
-        else                              badge='<span class="row-badge" style="background:rgba(255,165,0,0.1);color:#ffa500;border:1px solid #cc840066">\u063A\u064A\u0631 \u0645\u0648\u062C\u0648\u062F</span>';
+        if      (r.status==='ok')         badge='<span class="row-badge badge-ok">مسموح</span>';
+        else if (r.status==='blocked')    badge='<span class="row-badge badge-skip">تجاوز الحد</span>';
+        else if (r.status==='registered') badge='<span class="row-badge badge-skip">مسجّل</span>';
+        else                              badge='<span class="row-badge" style="background:rgba(255,165,0,0.1);color:#ffa500;border:1px solid #cc840066">غير موجود</span>';
         var hourColor = r.status==='ok'?'color:#00ff88':r.status==='blocked'?'color:#ff4444':'color:#888';
-        tr.innerHTML='<td style="font-family:monospace;color:#ddd">'+r.code+'</td><td>'+r.name+'</td><td style="'+hourColor+'">'+r.displayTime+'</td><td>'+badge+'</td>';
-        tbody.appendChild(tr);
+        tr.innerHTML='<td style="font-family:monospace;color:#ddd">'+esc(r.code)+'</td><td>'+esc(r.name)+'</td><td style="'+hourColor+'">'+esc(r.displayTime)+'</td><td>'+badge+'</td>';
+        frag.appendChild(tr);
     });
+    tbody.appendChild(frag);
     eligibleList=el;
     var sb=document.getElementById('submitAllBtn');
-    if (el.length>0){ sb.style.display='block'; document.getElementById('submitAllLabel').textContent='\u062A\u0633\u062C\u064A\u0644 '+el.length+' \u0645\u0648\u0638\u0641 \u0645\u0633\u0645\u0648\u062D \u0644\u0647\u0645'; }
-    else { sb.style.display='none'; showBulkMsg('\u0644\u0627 \u064A\u0648\u062C\u062F \u0645\u0648\u0638\u0641\u0648\u0646 \u0645\u0633\u0645\u0648\u062D \u0644\u0647\u0645 \u0641\u064A \u0647\u0630\u0627 \u0627\u0644\u0645\u0644\u0641','warn'); }
+    if (el.length>0){ sb.style.display='block'; sb.disabled=false; document.getElementById('submitAllLabel').textContent='تسجيل '+el.length+' موظف مسموح لهم'; }
+    else { sb.style.display='none'; showBulkMsg('لا يوجد موظفون مسموح لهم في هذا الملف','warn'); }
     document.getElementById('downloadXlsBtn').style.display='block';
     document.getElementById('bulkResetBtn').style.display='block';
 }
 
+// تسجيل الكل في طلب واحد (أو دفعات 400 لو العدد كبير جداً)
 async function submitAllEligible() {
     if (!eligibleList.length) return;
+    var mode=currentMode, st=store[mode];
     var btn=document.getElementById('submitAllBtn'), label=document.getElementById('submitAllLabel'), spinner=document.getElementById('submitAllSpinner');
-    btn.disabled=true; spinner.style.display='inline-block';
-    var sent=0, failed=0;
-    for (var i=0; i<eligibleList.length; i++) {
-        var emp=eligibleList[i];
-        try {
-            await fetch(getApiUrl(currentMode),{method:'POST',mode:'no-cors',body:JSON.stringify({
-                code:emp.code, name:emp.name, dept:emp.dept, hours:emp.displayTime, address:emp.address||''
-            })});
-            sent++;
-        } catch(e){ failed++; }
-        label.textContent='\u062C\u0627\u0631\u064A \u0627\u0644\u0625\u0631\u0633\u0627\u0644... '+(sent+failed)+' / '+eligibleList.length;
-        await sleep(150);
+    btn.disabled=true; spinner.style.display='inline-block'; label.textContent='جاري الإرسال...';
+    var list = eligibleList.map(function(e){ return {code:e.code, name:e.name, dept:e.dept, address:e.address||'', hours:e.displayTime}; });
+    var CH = 400, added = 0, skipped = 0, failed = false;
+    bulkBusy = true;
+    for (var i=0; i<list.length; i+=CH) {
+        var chunk = list.slice(i, i+CH), done = false;
+        for (var a=0; a<3 && !done; a++) {
+            try {
+                var d = await postToServer(mode, {bulk:chunk}, 60000);
+                added += (d.added !== undefined ? d.added : chunk.length); skipped += (d.skipped||0);
+                done = true;
+            } catch(e) { await sleep(800*(a+1)); }
+        }
+        if (!done) { failed = true; break; }
+        chunk.forEach(function(c){ var k=normCode(c.code); st.registered.add(k); st.local.add(k); });
+        label.textContent='تم إرسال '+Math.min(i+CH,list.length)+' / '+list.length;
     }
-    spinner.style.display='none'; btn.disabled=false; updateDashboard();
-    if (failed===0){ btn.style.display='none'; showBulkMsg('\u062A\u0645 \u062A\u0633\u062C\u064A\u0644 '+sent+' \u0645\u0648\u0638\u0641 \u0628\u0646\u062C\u0627\u062D','success'); }
-    else { label.textContent='\u0625\u0639\u0627\u062F\u0629 \u0627\u0644\u0645\u062D\u0627\u0648\u0644\u0629'; showBulkMsg('\u062A\u0645: '+sent+'  |  \u0641\u0634\u0644: '+failed,'warn'); }
+    bulkBusy = false;
+    spinner.style.display='none'; btn.disabled=false; renderCount();
+    if (!failed) {
+        btn.style.display='none';
+        showBulkMsg('تم تسجيل '+added+' موظف بنجاح'+(skipped?(' (تم تجاهل '+skipped+' مسجلين مسبقاً)'):''),'success');
+    } else {
+        label.textContent='إعادة المحاولة';
+        showBulkMsg('تم: '+added+'  |  فشل جزء من الإرسال، اضغط إعادة المحاولة (لن يتكرر أي كود)','warn');
+        // نعيد تحديث القائمة بحيث المتسجلين يختفوا
+        await loadMode(mode, true);
+    }
 }
 
 // ===== EXCEL EXPORTS =====
 function xlsHeader() {
     return '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel">'
          + '<head><meta charset="UTF-8"><style>'
-         + 'td,th { font-family:Calibri,sans-serif; font-size:12pt; text-align:center; vertical-align:middle; border:1px solid #000000; padding:6px 14px; font-weight:bold; }'
+         + 'td,th { font-family:Calibri,sans-serif; font-size:12pt; text-align:center; vertical-align:middle; border:1px solid #000000; padding:6px 14px; font-weight:bold; mso-number-format:"\\@"; }'
          + '.title { background:#1a1a1a; color:#FFFFFF; font-size:15pt; }'
          + '.hdr   { background:#2e7d32; color:#FFFFFF; font-size:13pt; }'
          + '.meta  { background:#2d2d2d; color:#CCCCCC; }'
-         + '.ok    { color:#006400; background:#E8F5E9; }'
-         + '.block { color:#B00020; background:#FFEBEE; }'
-         + '.unk   { color:#7B4F00; background:#FFF8E1; }'
          + '.h-ok  { color:#006400; }'
-         + '.h-bad { color:#B00020; }'
          + '.num   { color:#2e7d32; }'
          + '</style></head><body>';
 }
 
 function downloadBulkExcel() {
-    // ثغرة سابقة: كان بيتم تحميل كل الأسماء حتى اللي تجاوزوا الحد أو مش مسموح لهم بالتسجيل.
-    // التعديل: الشيت اللي بيتحمل بيحتوي فقط على الموظفين المسموح لهم بالتسجيل (eligible).
     var eligibleOnly = lastBulkResults.filter(function(r){ return r.status === 'ok'; });
-    if (!eligibleOnly.length) { showBulkMsg("\u0644\u0627 \u064A\u0648\u062C\u062F \u0645\u0648\u0638\u0641\u0648\u0646 \u0645\u0633\u0645\u0648\u062D \u0644\u0647\u0645 \u0644\u062A\u062D\u0645\u064A\u0644\u0647\u0645","warn"); return; }
+    if (!eligibleOnly.length) { showBulkMsg("لا يوجد موظفون مسموح لهم لتحميلهم","warn"); return; }
     var d = new Date().toISOString().split('T')[0];
     var html = xlsHeader() + '<table>'
-        + '<tr><td colspan="4" class="title">PRODUCTION - OVERTIME REPORT ('+(MODE_LABELS[currentMode]||'')+')</td></tr>'
+        + '<tr><td colspan="4" class="title">PRODUCTION - OVERTIME REPORT ('+esc(MODE_LABELS[currentMode]||'')+')</td></tr>'
         + '<tr><td colspan="2" class="meta">Date</td><td colspan="2" class="meta">'+d+'</td></tr>'
         + '<tr><td colspan="4" style="border:none;height:6px;"></td></tr>'
         + '<tr><th class="hdr">Employee Code</th><th class="hdr">Full Name</th><th class="hdr">Address</th><th class="hdr">Overtime Hours</th></tr>';
     eligibleOnly.forEach(function(r){
-        html+='<tr><td>'+r.code+'</td><td>'+r.name+'</td><td>'+(r.address||'-')+'</td><td class="h-ok">'+r.displayTime+'</td></tr>';
+        html+='<tr><td>'+esc(r.code)+'</td><td>'+esc(r.name)+'</td><td>'+esc(r.address||'-')+'</td><td class="h-ok">'+esc(r.displayTime)+'</td></tr>';
     });
     html+='</table></body></html>';
     triggerXls(html,'PRODUCTION_Overtime_BulkResult_'+d+'.xls');
 }
 
 async function downloadHistoryExcel() {
-    showMessage("\u062C\u0627\u0631\u064A \u0627\u0644\u062A\u062D\u0645\u064A\u0644...","info");
+    showMessage("جاري التحميل...","info");
     try {
-        var res=await fetch(getApiUrl(currentMode)+'?action=getFullTodayData'), data=await res.json();
+        var data = await fetchJson(getApiUrl(currentMode)+'?action=getFullTodayData&_='+Date.now(), 25000);
         if (data.status==="success") {
             var d=new Date().toISOString().split('T')[0];
             var html=xlsHeader()+'<table>'
-                +'<tr><td colspan="7" class="title">PRODUCTION - DAILY OVERTIME REPORT ('+(MODE_LABELS[currentMode]||'')+')</td></tr>'
+                +'<tr><td colspan="7" class="title">PRODUCTION - DAILY OVERTIME REPORT ('+esc(MODE_LABELS[currentMode]||'')+')</td></tr>'
                 +'<tr><td colspan="3" class="meta">Date</td><td colspan="4" class="meta">'+d+'</td></tr>'
                 +'<tr><td colspan="3" class="meta">Total Registered</td><td colspan="4" class="meta num">'+data.list.length+'</td></tr>'
                 +'<tr><td colspan="7" style="border:none;height:6px;"></td></tr>'
                 +'<tr><th class="hdr">#</th><th class="hdr">Employee Code</th><th class="hdr">Full Name</th><th class="hdr">Department</th><th class="hdr">Address</th><th class="hdr">Overtime Hours</th><th class="hdr">Reg. Time</th></tr>';
             data.list.forEach(function(r,i){
-                html+='<tr><td class="num">'+(i+1)+'</td><td>'+r.code+'</td><td>'+r.name+'</td><td>'+r.dept+'</td><td>'+(r.address||'-')+'</td><td class="h-ok">'+extractLiteralTime(r.hours)+'</td><td>'+formatRegTime(r.time)+'</td></tr>';
+                html+='<tr><td class="num">'+(i+1)+'</td><td>'+esc(r.code)+'</td><td>'+esc(r.name)+'</td><td>'+esc(r.dept)+'</td><td>'+esc(r.address||'-')+'</td><td class="h-ok">'+esc(cleanHours(r.hours))+'</td><td>'+esc(r.time)+'</td></tr>';
             });
             html+='</table></body></html>';
             triggerXls(html,'PRODUCTION_Overtime_'+d+'.xls');
             hideMessage();
-        }
-    } catch(e){ showMessage("\u0641\u0634\u0644 \u0627\u0644\u062A\u062D\u0645\u064A\u0644","error"); }
+        } else { showMessage("فشل التحميل","error"); }
+    } catch(e){ showMessage("فشل التحميل","error"); }
 }
 
 function triggerXls(html, filename) {
@@ -571,34 +647,59 @@ function resetBulk() {
 }
 
 // ===== SINGLE =====
+var currentEmp = null;
+
 async function lookupEmployee() {
-    var code=String(document.getElementById('codeInp').value).trim();
-    if (!code) return showMessage("\u064A\u0631\u062C\u0649 \u0625\u062F\u062E\u0627\u0644 \u0627\u0644\u0643\u0648\u062F","error");
-    if (cacheLoadedStore[currentMode]&&employeeCacheStore[currentMode][code]){ var e=employeeCacheStore[currentMode][code]; displayEmployee({status:"success",name:e.name,dept:e.dept,hours:e.hours,address:e.address||''}); return; }
-    showMessage("\u062C\u0627\u0631\u064A \u0627\u0644\u0628\u062D\u062B...","info");
-    try {
-        var ctrl=new AbortController(), timer=setTimeout(function(){ ctrl.abort(); },15000);
-        var res=await fetch(getApiUrl(currentMode)+'?code='+code,{signal:ctrl.signal}); clearTimeout(timer);
-        var data=await res.json();
-        if (data.status==="already_registered") return showMessage("\u0627\u0644\u0645\u0648\u0638\u0641 \u0645\u0633\u062C\u0644 \u0628\u0627\u0644\u0641\u0639\u0644!","error");
-        if (data.status==="success"){ displayEmployee(data); employeeCacheStore[currentMode][code]={name:data.name,dept:data.dept,hours:data.hours,address:data.address||''}; }
-        else showMessage("\u0627\u0644\u0643\u0648\u062F \u063A\u064A\u0631 \u0645\u0648\u062C\u0648\u062F","error");
-    } catch(e){ showMessage(e.name==='AbortError'?"\u0627\u0646\u062A\u0647\u062A \u0627\u0644\u0645\u0647\u0644\u0629\u060C \u062D\u0627\u0648\u0644 \u0645\u0631\u0629 \u0623\u062E\u0631\u0649":"\u062E\u0637\u0623 \u0641\u064A \u0627\u0644\u0627\u062A\u0635\u0627\u0644","error"); }
+    var mode = currentMode, st = store[mode];
+    var code = normCode(document.getElementById('codeInp').value);
+    if (!code) return showMessage("يرجى إدخال الكود","error");
+
+    if (!st.loaded) {
+        showMessage("جاري تحميل بيانات الموظفين...","info");
+        var ok = await loadMode(mode);
+        if (!ok) return showMessage("تعذر الاتصال بالسيرفر، تأكد من الإنترنت وحاول مرة أخرى","error");
+        hideMessage();
+    }
+    if (mode !== currentMode) return;
+
+    if (st.registered.has(code)) return showMessage("الموظف مسجل بالفعل!","error");
+
+    var emp = st.emps[code];
+    if (!emp) {
+        // تأكيد أخير من السيرفر قبل ما نقول "غير موجود" (لو الموظف اتضاف حديثاً للشيت)
+        showMessage("جاري التأكد...","info");
+        try {
+            var d = await fetchJson(getApiUrl(mode)+'?code='+encodeURIComponent(code)+'&_='+Date.now(), 15000);
+            if (d.status === 'already_registered') { st.registered.add(code); renderCount(); return showMessage("الموظف مسجل بالفعل!","error"); }
+            if (d.status === 'success') {
+                emp = { code:String(d.code||code).trim(), name:d.name, dept:d.dept, hours:cleanHours(d.hours), address:d.address||'' };
+                st.emps[code] = emp;
+            } else if (d.status === 'not_found') {
+                return showMessage("الكود غير موجود","error");
+            } else {
+                return showMessage("حدث خطأ في السيرفر، حاول مرة أخرى","error");
+            }
+        } catch(e) {
+            return showMessage(e.name==='AbortError' ? "انتهت المهلة، حاول مرة أخرى" : "خطأ في الاتصال، حاول مرة أخرى","error");
+        }
+    }
+    displayEmployee(emp);
 }
 
-function displayEmployee(data) {
-    document.getElementById('nameInp').value    = data.name;
-    document.getElementById('deptInp').value    = data.dept;
-    document.getElementById('addressInp').value = data.address || '';
-    var t=extractLiteralTime(data.hours), hInp=document.getElementById('hoursInp');
-    hInp.value=t; hInp.className='';
+function displayEmployee(emp) {
+    currentEmp = emp;
+    document.getElementById('nameInp').value    = emp.name;
+    document.getElementById('deptInp').value    = emp.dept;
+    document.getElementById('addressInp').value = emp.address || '';
+    var hInp = document.getElementById('hoursInp');
+    hInp.value = emp.hours; hInp.className = '';
 
     if (currentMode === 'normal') {
-        var h=parseInt(t.split(':')[0])||0, m=parseInt(t.split(':')[1])||0;
-        if (h>11||(h===11&&m>0)){ hInp.classList.add('danger-hours'); document.getElementById('submitBtn').style.display='none'; showMessage("\u0645\u0631\u0641\u0648\u0636: \u062A\u062E\u0637\u0649 \u0627\u0644\u062D\u062F \u0627\u0644\u0623\u0642\u0635\u0649 (11:00)","error"); }
-        else { hInp.classList.add('safe-hours'); document.getElementById('submitBtn').style.display='block'; hideMessage(); }
+        if (!isEligible(emp.hours)) {
+            hInp.classList.add('danger-hours'); document.getElementById('submitBtn').style.display='none';
+            showMessage("مرفوض: تخطى الحد الأقصى (11:00)","error");
+        } else { hInp.classList.add('safe-hours'); document.getElementById('submitBtn').style.display='block'; hideMessage(); }
     } else {
-        // Saturday / Holiday overtime: لا يوجد أي شرط أو حد أقصى للساعات - أي موظف يقدر يسجل
         hInp.classList.add('safe-hours');
         document.getElementById('submitBtn').style.display='block';
         hideMessage();
@@ -609,47 +710,37 @@ function displayEmployee(data) {
     document.getElementById('backBtn').style.display='block';
 }
 
-async function submitData() {
-    var payload={
-        code:    document.getElementById('codeInp').value,
-        name:    document.getElementById('nameInp').value,
-        dept:    document.getElementById('deptInp').value,
-        address: document.getElementById('addressInp').value || '',
-        hours:   document.getElementById('hoursInp').value
+// تسجيل فوري: الشاشة بتتحدث في نفس اللحظة والحفظ في الشيت بيتم في الخلفية
+function submitData() {
+    if (!currentEmp) return;
+    var mode = currentMode, st = store[mode];
+    var key = normCode(currentEmp.code);
+    if (st.registered.has(key)) return showMessage("الموظف مسجل بالفعل!","error");
+    var payload = {
+        code:    currentEmp.code,
+        name:    currentEmp.name,
+        dept:    currentEmp.dept,
+        address: currentEmp.address || '',
+        hours:   currentEmp.hours      // نفس القيمة اللي في شيت الداتا بالظبط
     };
-    try {
-        await fetch(getApiUrl(currentMode),{method:'POST',mode:'no-cors',body:JSON.stringify(payload)});
-        showMessage("\u062A\u0645 \u0627\u0644\u062A\u0633\u062C\u064A\u0644 \u0628\u0646\u062C\u0627\u062D!","success");
-        updateDashboard();
-        setTimeout(resetUI,1500);
-    } catch(e){ showMessage("\u0641\u0634\u0644 \u0627\u0644\u062D\u0641\u0638","error"); }
+    st.registered.add(key); st.local.add(key);
+    renderCount();
+    showMessage("تم التسجيل بنجاح!","success");
+    currentEmp = null;
+    setTimeout(resetUI, 500);
+    saveInBackground(mode, payload);
 }
 
 function resetUI(){
+    currentEmp = null;
     document.getElementById('codeInp').value='';
     document.getElementById('searchSection').style.display='block';
     document.getElementById('detailsSection').style.display='none';
+    document.getElementById('submitBtn').style.display='none';
     document.getElementById('codeInp').focus();
     hideMessage();
 }
 
-async function updateDashboard() {
-    try {
-        var ctrl=new AbortController();
-        setTimeout(function(){ ctrl.abort(); },10000);
-        var res=await fetch(getApiUrl(currentMode)+'?action=getFullTodayData',{signal:ctrl.signal}), data=await res.json();
-        if(data.status==="success") document.getElementById('countDash').innerText=data.totalEmployees;
-    } catch(e) {}
-}
-
-function formatRegTime(raw) {
-    if (!raw) return "";
-    var str=String(raw).trim();
-    if (str.includes('T')){ var tp=str.split('T')[1].replace('Z',''), pts=tp.split(':'); var h=parseInt(pts[0])||0, m=parseInt(pts[1])||0; var off=new Date().getTimezoneOffset()*-1+6, tot=((h*60+m+off)%1440+1440)%1440; return String(Math.floor(tot/60)).padStart(2,'0')+':'+String(tot%60).padStart(2,'0'); }
-    var match=str.match(/^(\d{1,2}):(\d{2})/); if(match) return match[1].padStart(2,'0')+':'+match[2]; return str;
-}
-
-function sleep(ms){ return new Promise(function(r){ setTimeout(r,ms); }); }
 function showMessage(t,c){ var m=document.getElementById('msg'); m.innerText=t; m.className=c; m.style.display='block'; }
 function hideMessage(){ document.getElementById('msg').style.display='none'; }
 function showBulkMsg(t,c){ var m=document.getElementById('bulkMsg'); m.innerText=t; m.className=c; m.style.display='block'; }
