@@ -392,7 +392,7 @@ function extractLiteralTime(raw) {
 
     return str;
 }
-function isEligible(t){ var h=parseInt(t.split(':')[0])||0, m=parseInt(t.split(':')[1])||0; return !(h>11||(h===11&&m>0)); }
+function isEligible(t){ var h=parseInt(t.split(':')[0])||0, m=parseInt(t.split(':')[1])||0; return !(h>10||(h===10&&m>0)); }
 
 async function fetchEmployee(code) {
     var mode = currentMode;
@@ -610,7 +610,7 @@ function displayEmployee(data) {
 
     if (currentMode === 'normal') {
         var h=parseInt(t.split(':')[0])||0, m=parseInt(t.split(':')[1])||0;
-        if (h>11||(h===11&&m>0)){ hInp.classList.add('danger-hours'); document.getElementById('submitBtn').style.display='none'; showMessage("\u0645\u0631\u0641\u0648\u0636: \u062A\u062E\u0637\u0649 \u0627\u0644\u062D\u062F \u0627\u0644\u0623\u0642\u0635\u0649 (11:00)","error"); }
+        if (h>10||(h===10&&m>0)){ hInp.classList.add('danger-hours'); document.getElementById('submitBtn').style.display='none'; showMessage("\u0645\u0631\u0641\u0648\u0636: \u062A\u062E\u0637\u0649 \u0627\u0644\u062D\u062F \u0627\u0644\u0623\u0642\u0635\u0649 (10:00)","error"); }
         else { hInp.classList.add('safe-hours'); document.getElementById('submitBtn').style.display='block'; hideMessage(); }
     } else {
         // Saturday / Holiday overtime: لا يوجد أي شرط أو حد أقصى للساعات - أي موظف يقدر يسجل
