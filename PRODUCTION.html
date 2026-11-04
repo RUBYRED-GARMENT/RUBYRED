@@ -26,7 +26,7 @@
         .dashboard { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 13px; color: #888; border-bottom: 1px solid #333; padding-bottom: 10px; }
         .stat-box span { color: var(--accent); font-weight: bold; }
         h2 { color: var(--accent); text-align: center; margin: 0; letter-spacing: 2px; }
-        .brand-sub { text-align: center; font-size: 11px; color: #888; margin-bottom: 25px; }
+        .brand-sub { text-align: center; font-size: px; color: #888; margin-bottom: 25px; }
         .field-group { margin-bottom: 15px; text-align: right; }
         label { display: block; margin-bottom: 5px; font-size: 14px; color: var(--accent); font-weight: bold; }
         input { width: 100%; padding: 12px; background: #262626; border: 1px solid #333; border-radius: 8px; color: #fff; font-size: 18px; outline: none; text-align: center; }
@@ -47,7 +47,7 @@
         .tab-bar { display: flex; flex-wrap: wrap; border: 1px solid #333; border-radius: 8px; overflow: hidden; margin-bottom: 22px; }
         .tab-btn { flex: 1 1 50%; padding: 10px 6px; background: transparent; border: none; color: #888; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.2s; font-family: inherit; border-bottom: 1px solid #222; }
         .tab-btn.active { background: var(--accent); color: #fff; }
-        .tab-btn.mode-btn { flex: 1 1 33.33%; font-size: 11px; }
+        .tab-btn.mode-btn { flex: 1 1 33.33%; font-size: px; }
         #bulkSection { display: none; }
         .upload-zone { border: 2px dashed #444; border-radius: 10px; padding: 28px 15px; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s; position: relative; margin-bottom: 15px; }
         .upload-zone:hover, .upload-zone.drag-over { border-color: var(--accent); background: rgba(46,125,50,0.05); }
@@ -55,7 +55,7 @@
         .upload-icon  { font-size: 32px; margin-bottom: 8px; }
         .upload-label { color: #888; font-size: 13px; }
         .upload-label strong { color: var(--accent); }
-        .upload-hint  { font-size: 11px; color: #555; margin-top: 5px; }
+        .upload-hint  { font-size: px; color: #555; margin-top: 5px; }
         #bulkProgress { display: none; margin-bottom: 15px; }
         .progress-bar-wrap { background: #262626; border-radius: 20px; height: 8px; overflow: hidden; margin: 8px 0; }
         .progress-bar-fill { height: 100%; background: var(--accent); border-radius: 20px; transition: width 0.3s ease; width: 0%; }
@@ -212,7 +212,7 @@
         </div>
     </div>
 
-    <button class="btn" style="background:transparent;border:1px solid #333;color:#aaa;font-size:11px;margin-top:20px;" onclick="downloadHistoryExcel()">تحميل سجل اليوم Excel</button>
+    <button class="btn" style="background:transparent;border:1px solid #333;color:#aaa;font-size:px;margin-top:20px;" onclick="downloadHistoryExcel()">تحميل سجل اليوم Excel</button>
 </div>
 
 <script>
@@ -261,7 +261,7 @@ checkTimeGate();
 
 // ===== LOGIN =====
 var VALID_USER = "PRODUCTION";
-var VALID_PASS = "PRO112233";
+var VALID_PASS = "PRO2233";
 
 function doLogin() {
     var user  = document.getElementById('loginUser').value.trim();
@@ -335,8 +335,8 @@ function hoursToMin(t) {
     if (!isNaN(n)) return Math.round(n*60);
     return 0;
 }
-// الحد الأقصى 11:00 (للتسجيل العادي فقط)
-function isEligible(t){ return hoursToMin(t) <= 11*60; }
+// الحد الأقصى 10:00 (للتسجيل العادي فقط)
+function isEligible(t){ return hoursToMin(t) <= 10*60; }
 
 async function fetchJson(url, timeoutMs) {
     var ctrl = new AbortController();
@@ -697,7 +697,7 @@ function displayEmployee(emp) {
     if (currentMode === 'normal') {
         if (!isEligible(emp.hours)) {
             hInp.classList.add('danger-hours'); document.getElementById('submitBtn').style.display='none';
-            showMessage("مرفوض: تخطى الحد الأقصى (11:00)","error");
+            showMessage("مرفوض: تخطى الحد الأقصى (10:00)","error");
         } else { hInp.classList.add('safe-hours'); document.getElementById('submitBtn').style.display='block'; hideMessage(); }
     } else {
         hInp.classList.add('safe-hours');
