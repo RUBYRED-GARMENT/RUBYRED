@@ -47,7 +47,7 @@
         .tab-bar { display: flex; flex-wrap: wrap; border: 1px solid #333; border-radius: 8px; overflow: hidden; margin-bottom: 22px; }
         .tab-btn { flex: 1 1 50%; padding: 10px 6px; background: transparent; border: none; color: #888; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.2s; font-family: inherit; border-bottom: 1px solid #222; }
         .tab-btn.active { background: var(--accent); color: #fff; }
-        .tab-btn.mode-btn { flex: 1 1 33.33%; font-size: 11px; }
+        .tab-btn.mode-btn { flex: 1 1 33.33%; font-size: px; }
         #bulkSection { display: none; }
         .upload-zone { border: 2px dashed #444; border-radius: 10px; padding: 28px 15px; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s; position: relative; margin-bottom: 15px; }
         .upload-zone:hover, .upload-zone.drag-over { border-color: var(--accent); background: rgba(46,125,50,0.05); }
@@ -55,7 +55,7 @@
         .upload-icon  { font-size: 32px; margin-bottom: 8px; }
         .upload-label { color: #888; font-size: 13px; }
         .upload-label strong { color: var(--accent); }
-        .upload-hint  { font-size: 11px; color: #555; margin-top: 5px; }
+        .upload-hint  { font-size: px; color: #555; margin-top: 5px; }
         #bulkProgress { display: none; margin-bottom: 15px; }
         .progress-bar-wrap { background: #262626; border-radius: 20px; height: 8px; overflow: hidden; margin: 8px 0; }
         .progress-bar-fill { height: 100%; background: var(--accent); border-radius: 20px; transition: width 0.3s ease; width: 0%; }
@@ -210,12 +210,12 @@
         </div>
     </div>
 
-    <button class="btn" style="background:transparent;border:1px solid #333;color:#aaa;font-size:11px;margin-top:20px;" onclick="downloadHistoryExcel()">&#1578;&#1581;&#1605;&#1610;&#1604; &#1587;&#1580;&#1604; &#1575;&#1604;&#1610;&#1608;&#1605; Excel</button>
+    <button class="btn" style="background:transparent;border:1px solid #333;color:#aaa;font-size:px;margin-top:20px;" onclick="downloadHistoryExcel()">&#1578;&#1581;&#1605;&#1610;&#1604; &#1587;&#1580;&#1604; &#1575;&#1604;&#1610;&#1608;&#1605; Excel</button>
 </div>
 
 <script>
 // ===== TIME GATE =====
-var OPEN_H  = 11;
+var OPEN_H  = 12;
 var CLOSE_H = 14;
 var appUnlocked = false;
 
@@ -285,9 +285,9 @@ function doLogin() {
 
 // ===== API =====
 // رابط سكريبت التسجيل العادي (Overtime عادي)
-var API_URL_NORMAL   = "https://script.google.com/macros/s/AKfycbw1x3DREaBdrvvX9aADKGYw3vAwvYYiwe8Z72yD7hhF_HbvlyXaAa_QaLpVVuWSsIQO/exec";
+var API_URL_NORMAL   = "https://script.google.com/macros/s/AKfycbyDgGvTdvmYprkP_lt0u69aVQpF7oGaQbBrXApgmYU5ROD7s4ztC9g-t6ytLOURv8gH/exec";
 // ضع هنا رابط سكريبت شيت "Saturday Overtime" لما تبعته
-var API_URL_SATURDAY = "https://script.google.com/macros/s/AKfycbxvwSNr9IJuXEUXOxCc8A4h62Nn5pOMd6AEqjrspIlEOLJNHRaw2N0Q7tvoxaBESelV/exec";
+var API_URL_SATURDAY = "https://script.google.com/macros/s/AKfycbzrCXLmZG14zyPZbC2nt_mxRrNs7wlVY0XHexb3jyUfiZH7SsMo94hkZYku3cgQ-jyc/exec";
 // ضع هنا رابط سكريبت شيت "Holiday Overtime" لما تبعته
 var API_URL_HOLIDAY  = "https://script.google.com/macros/s/AKfycbz0I1t5kZHCKVhcbqeNHFQIa_l9dWTUZUnQ4ugTC-7k43D7AbUSlwgJ3EnRWal-SBRw4g/exec";
 
