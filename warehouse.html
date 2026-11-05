@@ -215,7 +215,7 @@
 
 <script>
 // ===== TIME GATE =====
-var OPEN_H  = 11;
+var OPEN_H  = 12;
 var CLOSE_H = 14;
 var appUnlocked = false;
 
@@ -285,9 +285,9 @@ function doLogin() {
 
 // ===== API =====
 // رابط سكريبت التسجيل العادي (Overtime عادي)
-var API_URL_NORMAL   = "https://script.google.com/macros/s/AKfycbyEOLmUBMOWWhhdrdjBAHjvvDpwlC5K5jIF4wuHqbvd1YJfJ6bnAzd_uQSl_8IyX2Xv/exec";
+var API_URL_NORMAL   = "https://script.google.com/macros/s/AKfycbwH0AV7-RFWD8Y6uhvXrgfwvYNu8NayfuXrRO8NVq_2IE1zlVONB2ysu059oGR3uf7_Jg/exec";
 // ضع هنا رابط سكريبت شيت "Saturday Overtime" لما تبعته
-var API_URL_SATURDAY = "https://script.google.com/macros/s/AKfycbwLo87aniu6Py-Q8Q7mWf7mRqqqxJnBIH-4qCRLgFRNMGqIcCuNDlYtLqz3Pjbj0ck-/exec";
+var API_URL_SATURDAY = "https://script.google.com/macros/s/AKfycbwLWTbZx7YaOcXuFRRmIqfPivHuxZAZ8m3vIjpGbhEmEmuHR3y2tZABaH_dpN8EuSyemQ/exec";
 // ضع هنا رابط سكريبت شيت "Holiday Overtime" لما تبعته
 var API_URL_HOLIDAY  = "https://script.google.com/macros/s/AKfycbx_-B5LB4E-FQQKTA3cXXcBFGAidV76bnc-QLs76gXGrsELD_w9H6G3loZueC7oo1QCzQ/exec";
 
@@ -377,7 +377,7 @@ function extractLiteralTime(raw) {
     if (!isNaN(num)&&num>1){ var h2=Math.floor(num),m2=Math.round((num-h2)*60); var total2=h2*60+m2-60; if(total2<0)total2=0; return String(Math.floor(total2/60)).padStart(2,'0')+":"+String(total2%60).padStart(2,'0'); }
     return str;
 }
-function isEligible(t){ var h=parseInt(t.split(':')[0])||0, m=parseInt(t.split(':')[1])||0; return !(h>11||(h===11&&m>0)); }
+function isEligible(t){ var h=parseInt(t.split(':')[0])||0, m=parseInt(t.split(':')[1])||0; return !(h>10||(h===10&&m>0)); }
 
 async function fetchEmployee(code) {
     var mode = currentMode;
@@ -595,7 +595,7 @@ function displayEmployee(data) {
 
     if (currentMode === 'normal') {
         var h=parseInt(t.split(':')[0])||0, m=parseInt(t.split(':')[1])||0;
-        if (h>11||(h===11&&m>0)){ hInp.classList.add('danger-hours'); document.getElementById('submitBtn').style.display='none'; showMessage("\u0645\u0631\u0641\u0648\u0636: \u062A\u062E\u0637\u0649 \u0627\u0644\u062D\u062F \u0627\u0644\u0623\u0642\u0635\u0649 (11:00)","error"); }
+        if (h>10||(h===10&&m>0)){ hInp.classList.add('danger-hours'); document.getElementById('submitBtn').style.display='none'; showMessage("\u0645\u0631\u0641\u0648\u0636: \u062A\u062E\u0637\u0649 \u0627\u0644\u062D\u062F \u0627\u0644\u0623\u0642\u0635\u0649 (10:00)","error"); }
         else { hInp.classList.add('safe-hours'); document.getElementById('submitBtn').style.display='block'; hideMessage(); }
     } else {
         // Saturday / Holiday overtime: لا يوجد أي شرط أو حد أقصى للساعات - أي موظف يقدر يسجل
